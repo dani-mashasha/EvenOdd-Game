@@ -1,5 +1,7 @@
 const readlineSync = require('readline-sync');
 const Player = require('./player');
+const Boss = require('./boss');
+
 
 class Game{
     constructor(min, max, bestof){
@@ -26,7 +28,6 @@ class Game{
 
     
     play(){
-     
 
         let winScore = Math.ceil(this.bestof/2);
         let roundWinner ;
@@ -58,7 +59,8 @@ class Game{
                     }
      
              }
-             console.log(`${roundWinner.name} Wins!!`);
+             console.log(`${roundWinner.name} Wins the Tournament !!`);
+             
              endTournament = !endTournament;
 
 
