@@ -2,13 +2,21 @@ const readlineSync = require('readline-sync');
 const Player = require('./player');
 
 class Game{
-    constructor(min, max, numOfPlayers, bestof){
+    constructor(min, max, bestof){
         this.min = min;
         this.max = max;
-        this.numOfPlayers = numOfPlayers;
+        this.numOfPlayers = this.chooseNumOfPlayers();
         this.players = []
         this.bestof = bestof;
 
+    }
+    chooseNumOfPlayers(){
+        let numOfPlayers = readlineSync.question(`Choose number of players: `);
+        while(numOfPlayers < 2 || numOfPlayers > 7 ){
+             numOfPlayers = readlineSync.question(`Please choose a valid number of player (beetwin 2 - 7): `);
+        }
+
+        return numOfPlayers
     }
 
     getRandomNum(){
@@ -18,30 +26,47 @@ class Game{
 
     
     play(){
-        const player1 = this.players[0];
-        const player2 = this.players[1];
+     
 
         let winScore = Math.ceil(this.bestof/2);
         let roundWinner ;
         let round = 0;
+        let endTournament = false;
+        
+        while(!endTournament){
+            let player1 = this.players[Math.floor(Math.random() * Math.floor(this.players.length))];
+            let player2 = this.players[this.players.indexOf(player1)+1 ? this.players.indexOf(player1)+1 : this.players.indexOf(player1)-1 ];
 
-        while(player1.score < winScore && player2.score < winScore){
-           const randomNum = this.getRandomNum();
+            while(player1.score < winScore && player2.score < winScore){
+                const randomNum = this.getRandomNum();
+     
+                if(randomNum % 2 == 0){
+                    roundWinner = player1;
+     
+                }else{
+                    roundWinner = player2;
+                }
+                roundWinner.score ++;
+                round++
+                console.log(`Round #${round}, random number is ${randomNum}, ${roundWinner.name} scored!
+                        Status: ${player1.name} ${player1.score}, ${player2.name} ${player2.score}`);
 
-           if(randomNum % 2 == 0){
-               roundWinner = player1;
+                    player1 = this.players[Math.floor(Math.random() * Math.floor(this.players.length))];
+                    player2 = this.players[Math.floor(Math.random() * Math.floor(this.players.length))];
+                    while(player1 == player2){
+                        player2 = this.players[Math.floor(Math.random() * Math.floor(this.players.length))];
+                    }
+     
+             }
+             console.log(`${roundWinner.name} Wins!!`);
+             endTournament = !endTournament;
 
-           }else{
-               roundWinner = player2;
-           }
-           roundWinner.score ++;
-           round++
-           console.log(`Round #${round}, random number is ${randomNum}, ${roundWinner.name} scored!
-                   Status: ${player1.name} ${player1.score}, ${player2.name} ${player2.score}`)
 
+         }
+        
         }
-        console.log(`${roundWinner.name} Wins!!`)
-    }
+
+
 
 
      startGame(){
@@ -58,7 +83,7 @@ class Game{
     }
 }
 
-const game = new Game(-5,13,2,5);
+const game = new Game(-5,13,5);
 
 game.startGame()
 
